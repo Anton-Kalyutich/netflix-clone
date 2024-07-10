@@ -1,22 +1,33 @@
 import React, { useState, useEffect } from "react";
 import axios from "./axios";
-import './Row.css';
+import "./Row.css";
 
 let base_url = "https://image.tmdb.org/t/p/original/";
 
-function Row({ title, fetchUrl }) {
+function Row({ title, fetchUrl, isLargeRow }) {
   const [movies, setMovies] = useState([]);
 
   useEffect(() => {
     async function fetchData() {
-      let request = await axios.get(fetchUrl);
-      setMovies(request.data.results);
-      return request;
+      try {
+        let request = await axios.get(fetchUrl);
+        setMovies(request.data.results);
+        return request;
+      } catch (error) {
+        if (error.response) {
+          console.error("Error response:", error.response.data);
+        } else if (error.request) {
+          console.error("No response received:", error.request);
+        } else {
+          console.error("Axios error:", error.message);
+        }
+        console.error("Axios error config:", error.config);
+      }
     }
     fetchData();
   }, [fetchUrl]);
 
-  console.log(movies)
+  console.log(movies);
 
   return (
     <div className="row">
@@ -26,8 +37,10 @@ function Row({ title, fetchUrl }) {
         {movies.map((movie) => (
           <img
             key={movie.id}
-            className="row_poster"
-            src={`${base_url}${movie.poster_path}`}
+            className={`row_poster ${isLargeRow && "row_posterLarge"}`}
+            src={`${base_url}${
+              isLargeRow ? movie.poster_path : movie.backdrop_path
+            }`}
             alt={movie.name}
           />
         ))}
