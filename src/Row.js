@@ -34,7 +34,6 @@ function Row({ title, fetchUrl, isLargeRow }) {
     height: "390",
     width: "100%",
     playerVars: {
-      // https
       autoplay: 1,
     },
   };
